@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartSpend | Expense Tracker</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">S</span><span>SmartSpend</span></div>
+      <p class="side-label">WORKSPACE</p>
+      <a class="nav-item active" href="#dashboard">▦ &nbsp; Overview</a>
+      <a class="nav-item" href="#transactions">↕ &nbsp; Transactions</a>
+      <a class="nav-item" href="#insights">✧ &nbsp; Smart insights</a>
+      <div class="sidebar-bottom"><div class="avatar">ST</div><div><strong>Student account</strong><small>Personal finance</small></div></div>
+    </aside>
+
+    <main class="main-content" id="dashboard">
+      <header class="topbar">
+        <div><p class="eyebrow">YOUR MONEY, MADE CLEAR</p><h1>Financial overview</h1></div>
+        <a class="export-btn" href="/export.csv">↓ Export CSV</a>
+      </header>
+
+      <section class="welcome-row">
+        <div><h2>Good day 👋</h2><p>Here’s what’s happening with your money.</p></div>
+        <button class="primary-btn" id="open-form">＋ Add transaction</button>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card"><div class="stat-top"><span>Total balance</span><span class="stat-icon purple">₹</span></div><strong id="balance">₹0.00</strong><small>Income minus expenses</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Total income</span><span class="stat-icon green">↗</span></div><strong id="income">₹0.00</strong><small>All recorded income</small></article>
+        <article class="stat-card"><div class="stat-top"><span>Total expenses</span><span class="stat-icon orange">↘</span></div><strong id="expenses">₹0.00</strong><small>All recorded expenses</small></article>
+        <article class="stat-card"><div class="stat-top"><span>This month</span><span class="stat-icon blue">▦</span></div><strong id="month-expenses">₹0.00</strong><small>Expenses this month</small></article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel chart-panel">
+          <div class="panel-heading"><div><h3>Spending by category</h3><p>Where your money goes</p></div><span class="pill">All time</span></div>
+          <div class="chart-wrap"><canvas id="categoryChart"></canvas><div id="chart-empty" class="empty-chart">Add expenses to see your chart.</div></div>
+        </article>
+        <article class="panel insight-panel" id="insights">
+          <div class="panel-heading"><div><h3>Smart insights</h3><p>Patterns from your transactions</p></div><span class="sparkle">✧</span></div>
+          <div id="insight-list" class="insight-list"><p class="muted">Loading insights…</p></div>
+        </article>
+      </section>
+
+      <section class="panel transactions-panel" id="transactions">
+        <div class="panel-heading"><div><h3>Recent transactions</h3><p>Your latest money activity</p></div><button class="text-btn" id="view-all">View all</button></div>
+        <div class="table-scroll"><table><thead><tr><th>TRANSACTION</th><th>CATEGORY</th><th>DATE</th><th>AMOUNT</th><th>ACTION</th></tr></thead><tbody id="transaction-body"></tbody></table></div>
+        <div id="no-transactions" class="empty-state">No transactions yet. Add your first income or expense.</div>
+      </section>
+      <footer>SmartSpend · Built as a student portfolio project</footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modal">
+    <form class="modal" id="transaction-form">
+      <div class="modal-heading"><div><p class="eyebrow">MONEY MOVEMENT</p><h2 id="form-title">Add transaction</h2></div><button type="button" class="close-btn" id="close-form">×</button></div>
+      <input type="hidden" id="transaction-id">
+      <label>Title<input id="title" required maxlength="80" placeholder="e.g. Lunch with friends"></label>
+      <div class="form-row">
+        <label>Amount (₹)<input id="amount" type="number" min="0.01" step="0.01" required placeholder="500"></label>
+        <label>Type<select id="kind"><option value="expense">Expense</option><option value="income">Income</option></select></label>
+      </div>
+      <div class="form-row">
+        <label>Category<select id="category">{% for category in categories %}<option>{{ category }}</option>{% endfor %}</select></label>
+        <label>Date<input id="txn-date" type="date" value="{{ today }}" required></label>
+      </div>
+      <label>Note (optional)<textarea id="note" rows="2" placeholder="Add a short note…"></textarea></label>
+      <p class="form-error" id="form-error"></p>
+      <button class="primary-btn full-btn" type="submit">Save transaction</button>
+    </form>
+  </div>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
